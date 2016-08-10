@@ -4,6 +4,7 @@ using System.Collections;
 public class SpriteHaver : MonoBehaviour {
 
     public enum Axis { up, down, left, right, forward, back };
+    public enum Facing { up, down, left, right, forward, back };
     public bool reverseFace = false;
     public Axis axis = Axis.up;
     public Camera referenceCamera;
@@ -45,7 +46,7 @@ public class SpriteHaver : MonoBehaviour {
     }
 
     //gets a string orientation for use with sprite drawing
-    public string GetDirection()
+    public Facing GetDirection()
     {
         var orientation = referenceCamera.transform.rotation * GetAxis(axis);
 
@@ -55,27 +56,27 @@ public class SpriteHaver : MonoBehaviour {
         {
             if (orientation.x > -0.35)
             {
-                return "down";
+                return Facing.down;
             }
             else
             {
-                return "right";
+                return Facing.right;
             }
         }
         else if (orientation.x > orientation.z)
         {
             if (orientation.z < -0.35)
             {
-                return "up";
+                return Facing.up;
             }
             else
             {
-                return "left";
+                return Facing.left;
             }
         }
         else
         {
-            return "down";
+            return Facing.down;
         }
     }
 }
