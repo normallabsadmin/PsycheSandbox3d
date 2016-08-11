@@ -8,6 +8,7 @@ public class SpriteHaver : MonoBehaviour {
     public bool reverseFace = false;
     public Axis axis = Axis.up;
     public Camera referenceCamera;
+    //public float _zAnchor = 0f;
 
     // return a direction based upon chosen axis
     public Vector3 GetAxis(Axis refAxis)
@@ -35,12 +36,15 @@ public class SpriteHaver : MonoBehaviour {
         // if no camera referenced, grab the main camera
        
           referenceCamera = Camera.main;
+        
     }
 
     void Update()
     {
+        
         // rotates the object relative to the camera
         Vector3 targetPos = transform.position + referenceCamera.transform.rotation * (reverseFace ? Vector3.forward : Vector3.back);
+        //targetPos.y += _zAnchor;
         Vector3 targetOrientation = referenceCamera.transform.rotation * GetAxis(axis);
         transform.LookAt(targetPos, targetOrientation);
     }
