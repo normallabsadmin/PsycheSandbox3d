@@ -4,11 +4,13 @@ using System.Collections;
 public class PlayerContoller : MonoBehaviour {
 
     private MovementHaver _myMovementHaver;
+    private ActionHaver _myActionHaver;
 
 
     void Start()
     {
-        _myMovementHaver = GetComponentInChildren<MovementHaver>();
+        _myMovementHaver = GetComponent<MovementHaver>();
+        _myActionHaver = GetComponent<ActionHaver>();
     }
 
     void Update()
@@ -39,6 +41,11 @@ public class PlayerContoller : MonoBehaviour {
             _myMovementHaver.WalkDown(orientation);
         }
         #endregion
+
+        if (Input.GetKeyUp(KeyCode.T))
+        {
+            _myActionHaver.Inspect();
+        }
     }
 
     

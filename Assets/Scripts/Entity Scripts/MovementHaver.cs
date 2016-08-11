@@ -12,6 +12,7 @@ public class MovementHaver : MonoBehaviour {
 
     private Vector3 _position;
     private Vector3 _direction;
+    private Facing _lastFace = Facing.down; //last direction you turned to face
     private Transform _transform;
     private bool _isWalking;
     private bool _isIdle;
@@ -36,16 +37,33 @@ public class MovementHaver : MonoBehaviour {
     {
         Debug.DrawLine(transform.position, _position);
 
-        //raycast to position
-        if (Physics.Raycast(_transform.position, _direction, .5f))
+        //raycast to position get object
+        RaycastHit objectToCheck;
+        var obstacleBool = Physics.Raycast(_transform.position, _direction, out objectToCheck, 0.5f);
+
+
+        if (obstacleBool)
         {
-            _position = _transform.position;
-            //Debug.Log("Block in the way");
+            if (objectToCheck.transform.gameObject.GetComponent<Collider>().isTrigger)
+            {
+                CommitMovment();
+            }
+            else
+            {
+                _position = _transform.position;
+                //Debug.Log("Block in the way");
+            }
+
         }
         else //goto postion
         {
-            transform.position = Vector3.MoveTowards(transform.position, _position, Time.deltaTime * _speed);
+            CommitMovment();
         }
+    }
+
+    private void CommitMovment()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, _position, Time.deltaTime * _speed);
     }
 
     private void AnimateWalk()
@@ -86,6 +104,7 @@ public class MovementHaver : MonoBehaviour {
         switch (request)
         {
             case Facing.up:
+                _lastFace = Facing.up;
                 switch (orientation)
                 {
                     case Facing.down:
@@ -100,6 +119,7 @@ public class MovementHaver : MonoBehaviour {
                         return Vector3.forward;
                 }
             case Facing.right:
+                _lastFace = Facing.right;
                 switch (orientation)
                 {
                     case Facing.down:
@@ -114,6 +134,7 @@ public class MovementHaver : MonoBehaviour {
                         return Vector3.right;
                 }
             case Facing.down:
+                _lastFace = Facing.down;
                 switch (orientation)
                 {
                     case Facing.down:
@@ -128,6 +149,7 @@ public class MovementHaver : MonoBehaviour {
                         return Vector3.back;
                 }
             case Facing.left:
+                _lastFace = Facing.left;
                 switch (orientation)
                 {
                     case Facing.down:
@@ -142,6 +164,7 @@ public class MovementHaver : MonoBehaviour {
                         return Vector3.left;
                 }
             default:
+                _lastFace = Facing.down;
                 switch (orientation)
                 {
                     case Facing.down:
@@ -205,5 +228,10 @@ public class MovementHaver : MonoBehaviour {
             _myAnimator.SetFloat("input_x", 0f);
             _myAnimator.SetFloat("input_y", 0 - 1);
         }
+    }
+
+    public Vector3 ReturnFacingDirection()
+    {
+        return GetRelativeDirection(_lastFace, GetSpriteOrientation());
     }
 }
