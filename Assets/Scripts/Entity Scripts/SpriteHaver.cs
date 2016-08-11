@@ -36,7 +36,8 @@ public class SpriteHaver : MonoBehaviour {
         // if no camera referenced, grab the main camera
        
           referenceCamera = Camera.main;
-        
+        //GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        GetComponent<Renderer>().receiveShadows = true;
     }
 
     void Update()
