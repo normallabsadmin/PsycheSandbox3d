@@ -14,8 +14,11 @@ public class ActionHaver : MonoBehaviour {
     public void Inspect()
     {
         var facingSpace = transform.position + _myMovementHaver.ReturnFacingDirection();
-        var newInspector = Instantiate(_inspectorPrefab, facingSpace, Quaternion.identity);
-        
+        var newInspector = (GameObject)Instantiate(_inspectorPrefab, facingSpace, Quaternion.identity);
+
+        var inspectorController = newInspector.GetComponent<Inspector>();
+        inspectorController._myEventLogger = GetComponent<EventLogger>();
+
         /*
         Debug.DrawLine(transform.position,facingSpace,Color.red,5f);
         RaycastHit inspectedHit;
