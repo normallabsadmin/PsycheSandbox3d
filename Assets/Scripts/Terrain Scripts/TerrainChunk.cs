@@ -17,8 +17,8 @@ public class TerrainChunk : MonoBehaviour {
     void Start () {
        
         int i, j;
-        float x = -5;
-        float z = -5;
+        float x = -4.5f;
+        float z = -4.5f;
 
 	    if (_layoutTexture != null)
         {
@@ -46,7 +46,7 @@ public class TerrainChunk : MonoBehaviour {
                         */
                         #endregion
                 }
-                x = -5;
+                x = -4.5f;
                 j = 0;
                 z++;
             }
@@ -58,9 +58,10 @@ public class TerrainChunk : MonoBehaviour {
         var hexString = ColorUtility.ToHtmlStringRGBA(pixel);
 
         GameObject terrainToSpawn;
-        float heightAdjust;
+        float heightAdjust = 0;
         bool hasTree = false;
         Vector3 posTerrain = new Vector3(x, 1, z);
+        bool spawnBool = true;
 
         switch (hexString)
         {
@@ -72,7 +73,7 @@ public class TerrainChunk : MonoBehaviour {
                 hasTree = true;
                 break;
            //flat gwt
-            case "B200FFff":
+            case "B200FFFF":
                 terrainToSpawn = _grassBlock;
                 heightAdjust = 0f;
                 hasTree = true;
@@ -221,15 +222,18 @@ public class TerrainChunk : MonoBehaviour {
                 break;
 
             default:
-                terrainToSpawn = _dirtBlock;
-                heightAdjust = 0;
-                hasTree = false;
+                spawnBool = false;
+                terrainToSpawn = _grassBlock;
                 break;
 
         }
 
-        var newTerrain = (GameObject)Instantiate(terrainToSpawn, posTerrain, Quaternion.identity);
-        var terrainComp = newTerrain.GetComponent<Terrain>();
-        terrainComp._hasTree = hasTree;
+        if (spawnBool)
+        {
+            posTerrain.y += heightAdjust;
+            var newTerrain = (GameObject)Instantiate(terrainToSpawn, posTerrain, Quaternion.identity);
+            var terrainComp = newTerrain.GetComponent<Terrain>();
+            //terrainComp._hasTree = hasTree;
+        }
     }
 }
