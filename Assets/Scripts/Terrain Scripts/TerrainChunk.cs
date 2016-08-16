@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class TerrainChunk : MonoBehaviour {
+
+    public bool _runRender;
 
     public Texture2D _layoutTexture;
     public int _elevationBump = 0;
@@ -15,43 +18,52 @@ public class TerrainChunk : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-       
+
+        if (_runRender)
+        {
+            RenderTerrain();
+        }
+    }
+
+    private void RenderTerrain()
+    {
+
         int i, j;
         float x = -4.5f;
         float z = -4.5f;
 
-	    if (_layoutTexture != null)
+        if (_layoutTexture != null)
         {
-            for ( i = 0; i < 10; i++)// on row 
+            for (i = 0; i < 10; i++)// on row 
             {
-                for ( j = 0; j < 10; j++) //on column
-                { 
+                for (j = 0; j < 10; j++) //on column
+                {
                     var thisPixel = _layoutTexture.GetPixel(i, j);
-                    SpawnTerrain(thisPixel,x,z);
+                    SpawnTerrain(thisPixel, x, z);
                     x++;
                     #region debugCode
-                        /*
-                         * this code was used to test reading sprites
-                          Debug.Log(thisPixel);
-                        var newCube = (GameObject)Instantiate(_demoCube, transform.position, Quaternion.identity);
-                        newCube.GetComponent<Renderer>().material.color = thisPixel;
-                        newCube.transform.parent = transform;
-                        newCube.transform.position = new Vector3(i, 1, j);
+                    /*
+                     * this code was used to test reading sprites
+                      Debug.Log(thisPixel);
+                    var newCube = (GameObject)Instantiate(_demoCube, transform.position, Quaternion.identity);
+                    newCube.GetComponent<Renderer>().material.color = thisPixel;
+                    newCube.transform.parent = transform;
+                    newCube.transform.position = new Vector3(i, 1, j);
 
-                        var hex = ColorUtility.ToHtmlStringRGBA(thisPixel);
-                        if(hex == "C412FFFF")
-                        {
-                            Debug.Log("Win!");
-                        }
-                        */
-                        #endregion
+                    var hex = ColorUtility.ToHtmlStringRGBA(thisPixel);
+                    if(hex == "C412FFFF")
+                    {
+                        Debug.Log("Win!");
+                    }
+                    */
+                    #endregion
                 }
                 x = -4.5f;
                 j = 0;
                 z++;
             }
         }
-	}
+    }
 	
     private void SpawnTerrain(Color pixel, float x, float z)
     {
@@ -232,6 +244,8 @@ public class TerrainChunk : MonoBehaviour {
         {
             posTerrain.y += heightAdjust;
             var newTerrain = (GameObject)Instantiate(terrainToSpawn, posTerrain, Quaternion.identity);
+            newTerrain.transform.parent = transform;
+
             var terrainComp = newTerrain.GetComponent<Terrain>();
             //terrainComp._hasTree = hasTree;
         }
