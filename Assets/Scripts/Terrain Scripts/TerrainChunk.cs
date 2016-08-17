@@ -5,9 +5,13 @@ using System.Collections;
 public class TerrainChunk : MonoBehaviour {
 
     public bool _runRender;
+    private bool _isRendered;
+
+ 
 
     public Texture2D _layoutTexture;
-    public int _elevationBump = 0;
+    private Texture2D _lastlayoutTexture;
+    private float _elevationBump = 0;
 
     public GameObject _demoCube;
     public GameObject _grassBlock;
@@ -19,18 +23,64 @@ public class TerrainChunk : MonoBehaviour {
     // Use this for initialization
     void Start () {
 
+        _elevationBump = transform.position.y;
+
+    }
+
+    void Update()
+    {
+        if (_runRender && !_isRendered)
+        {
+            RenderTerrain();
+        }
+        else if (!_runRender)
+        {
+            DeleteChunk();
+        }
+
+        if(_lastlayoutTexture != _layoutTexture)
+        {
+            DeleteChunk();
+            RenderTerrain();
+        }
+
+        _lastlayoutTexture = _layoutTexture;
+
+    }
+    /*
+    void OnBecameVisible()
+    {
         if (_runRender)
         {
             RenderTerrain();
         }
     }
 
+    void OnBecameInvisible()
+    {
+        DeleteChunk();
+    }
+    */
+
+    private void DeleteChunk()
+    {
+         
+        foreach(Transform child in transform)
+        {
+            if (child.GetComponent<TerrainBlock>())
+            {
+                Destroy(child.gameObject);
+            }
+        }
+        _isRendered = false;
+    }
+
     private void RenderTerrain()
     {
 
         int i, j;
-        float x = -4.5f;
-        float z = -4.5f;
+        float x = 4.5f;
+        float z = 4.5f;
 
         if (_layoutTexture != null)
         {
@@ -40,7 +90,7 @@ public class TerrainChunk : MonoBehaviour {
                 {
                     var thisPixel = _layoutTexture.GetPixel(i, j);
                     SpawnTerrain(thisPixel, x, z);
-                    x++;
+                    z--;
                     #region debugCode
                     /*
                      * this code was used to test reading sprites
@@ -58,11 +108,12 @@ public class TerrainChunk : MonoBehaviour {
                     */
                     #endregion
                 }
-                x = -4.5f;
+                z = 4.5f;
                 j = 0;
-                z++;
+                x--;
             }
         }
+        _isRendered = true;
     }
 	
     private void SpawnTerrain(Color pixel, float x, float z)
@@ -72,7 +123,10 @@ public class TerrainChunk : MonoBehaviour {
         GameObject terrainToSpawn;
         float heightAdjust = 0;
         bool hasTree = false;
-        Vector3 posTerrain = new Vector3(x, 1, z);
+        Vector3 posTerrain = transform.position;
+        posTerrain.x += x;
+        posTerrain.y = 1 + _elevationBump;
+        posTerrain.z += z;
         bool spawnBool = true;
 
         switch (hexString)
@@ -246,8 +300,8 @@ public class TerrainChunk : MonoBehaviour {
             var newTerrain = (GameObject)Instantiate(terrainToSpawn, posTerrain, Quaternion.identity);
             newTerrain.transform.parent = transform;
 
-            var terrainComp = newTerrain.GetComponent<Terrain>();
-            //terrainComp._hasTree = hasTree;
+            var terrainComp = newTerrain.GetComponent<TerrainBlock>();
+            terrainComp._hasTree = hasTree;
         }
     }
 }
