@@ -1,25 +1,41 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+public enum TerrainType
+{
+    _grassLandLayouts
+   , _forestLayouts
+   , _riverLayouts
+}
+
 [ExecuteInEditMode]
 public class TerrainPreview : MonoBehaviour {
 
-    public TerrainMaster _myMaster;
-    public TerrainChunk _myTerrain;
-    public MeshRenderer _myRenderer;
+    private TerrainMaster _myMaster;
+    private TerrainChunk _myTerrain;
+    private MeshRenderer _myRenderer;
+    private Texture2D _myTexture;
 
-    public Texture2D _myTexture;
+    public TerrainType _currentTerrain;
 
-	// Use this for initialization
-	void Start () {
+    public Texture2D[] _grassLandLayouts;
+    public Texture2D[] _forestLayouts;
+    public Texture2D[] _riverLayouts;
+    public bool _randomizeLayout;
+    public bool _nextLayout;
+    public bool _lastLayout;
+
+
+    void Start () {
+        Setup();       
+	}
+
+    void Setup()
+    {
         _myMaster = transform.parent.GetComponentInParent<TerrainMaster>();
         _myTerrain = GetComponentInParent<TerrainChunk>();
         _myRenderer = GetComponent<MeshRenderer>();
-       
-	}
-
-    // Update is called once per frame
-
+    }
 
     void Update () {
         if (_myMaster._editingLevel) { 

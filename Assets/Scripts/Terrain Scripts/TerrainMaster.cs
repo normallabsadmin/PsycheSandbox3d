@@ -2,23 +2,41 @@
 using System.Collections;
 
 [ExecuteInEditMode]
-public class TerrainMaster : MonoBehaviour {
+public class TerrainMaster : MonoBehaviour
+{
 
     public bool _editingLevel;
-    public bool _previewLevel;
+    public bool _previewLevel = false;
 
     public GameObject _terrainChunk;
-    [Range(1f,100f)]
+    [Range(1f, 100f)]
     public int _mapSize = 1;
+    private int _lastMapSize;
 
     private void Start()
     {
-        GenerateChunks();
+        
     }
 
     private void Update()
     {
-        if (_previewLevel)
+        PreviewLevel();
+        RegenerateLevel();
+
+    }
+
+    private void RegenerateLevel()
+    {
+        if (_lastMapSize != _mapSize) { 
+            DeleteChunks();
+            GenerateChunks();
+        }
+        _lastMapSize = _mapSize;
+    }
+
+    private void PreviewLevel()
+    {
+        if (_previewLevel == true)
         {
             foreach (Transform child in transform)
             {
@@ -28,7 +46,7 @@ public class TerrainMaster : MonoBehaviour {
                 }
             }
         }
-        else
+        else if (_previewLevel == false)
         {
             foreach (Transform child in transform)
             {
@@ -44,18 +62,29 @@ public class TerrainMaster : MonoBehaviour {
     {
         var chunkSpace = _mapSize * 10;
         int i, j;
-        float x = 4.5f;
-        float z = 4.5f;
-
-        for (i = 0; i < 10; i++)// on row 
+        float x, z;
+        if ( _mapSize == 1)
         {
-            for (j = 0; j < 10; j++) //on column
+            x = 0;
+            z = 0;
+        }
+        else
+        {
+            x = (_mapSize -1) * 5;
+            z = (_mapSize - 1) * 5;
+        }
+       
+
+        for (i = 0; i < _mapSize; i++)// on row 
+        {
+            for (j = 0; j < _mapSize; j++) //on column
             {
-                SpawnChunk(x,z);
+                SpawnChunk(x, z);
+                z -= 10;
             }
-            z = 4.5f;
+            z = (_mapSize - 1) * 5;
             j = 0;
-            x--;
+            x -= 10;
         }
     }
 
@@ -65,6 +94,16 @@ public class TerrainMaster : MonoBehaviour {
         newPosition.x += x;
         newPosition.z += z;
         var newChunk = (GameObject)Instantiate(_terrainChunk, newPosition, Quaternion.identity);
+        newChunk.transform.parent = transform;
+    }
+
+    private void DeleteChunks()
+    {
+
+        while (transform.childCount != 0)
+        {
+            DestroyImmediate(transform.GetChild(0).gameObject);
+        }
     }
 }
 

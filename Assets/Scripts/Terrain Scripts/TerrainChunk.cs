@@ -1,25 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public enum TerrainType
-{
-    _grassLandLayouts
-   , _forestLayouts
-   , _riverLayouts
-}
+
 [ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
 
     public bool _runRender;
     private bool _isRendered;
 
-
-    public TerrainType _currentTerrain;
-   
-    public Texture2D[] _grassLandLayouts;
-    public Texture2D[] _forestLayouts;
-    public Texture2D[] _riverLayouts;
-    public bool _randomizeLayout;
     public Texture2D _layoutTexture;
     private Texture2D _lastlayoutTexture;
     private float _elevationBump = 0;
@@ -109,22 +97,6 @@ public class TerrainChunk : MonoBehaviour {
                     var thisPixel = _layoutTexture.GetPixel(i, j);
                     SpawnBlock(thisPixel, x, z);
                     z--;
-                    #region debugCode
-                    /*
-                     * this code was used to test reading sprites
-                      Debug.Log(thisPixel);
-                    var newCube = (GameObject)Instantiate(_demoCube, transform.position, Quaternion.identity);
-                    newCube.GetComponent<Renderer>().material.color = thisPixel;
-                    newCube.transform.parent = transform;
-                    newCube.transform.position = new Vector3(i, 1, j);
-
-                    var hex = ColorUtility.ToHtmlStringRGBA(thisPixel);
-                    if(hex == "C412FFFF")
-                    {
-                        Debug.Log("Win!");
-                    }
-                    */
-                    #endregion
                 }
                 z = 4.5f;
                 j = 0;
