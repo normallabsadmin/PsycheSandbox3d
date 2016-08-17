@@ -1,14 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-
+public enum TerrainType
+{
+    _grassLandLayouts
+   , _forestLayouts
+   , _riverLayouts
+}
+[ExecuteInEditMode]
 public class TerrainChunk : MonoBehaviour {
 
     public bool _runRender;
     private bool _isRendered;
 
- 
 
+    public TerrainType _currentTerrain;
+   
+    public Texture2D[] _grassLandLayouts;
+    public Texture2D[] _forestLayouts;
+    public Texture2D[] _riverLayouts;
+    public bool _randomizeLayout;
     public Texture2D _layoutTexture;
     private Texture2D _lastlayoutTexture;
     private float _elevationBump = 0;
@@ -47,7 +58,7 @@ public class TerrainChunk : MonoBehaviour {
         _lastlayoutTexture = _layoutTexture;
 
     }
-    /*
+    /* Heavy Lifting Scripts
     void OnBecameVisible()
     {
         if (_runRender)
@@ -64,14 +75,21 @@ public class TerrainChunk : MonoBehaviour {
 
     private void DeleteChunk()
     {
-         
+
+        while (transform.childCount != 1)
+        {
+            DestroyImmediate(transform.GetChild(1).gameObject);
+        }
+
+        /*
         foreach(Transform child in transform)
         {
             if (child.GetComponent<TerrainBlock>())
             {
-                Destroy(child.gameObject);
+                DestroyImmediate(child.gameObject);
             }
         }
+        */
         _isRendered = false;
     }
 
@@ -89,7 +107,7 @@ public class TerrainChunk : MonoBehaviour {
                 for (j = 0; j < 10; j++) //on column
                 {
                     var thisPixel = _layoutTexture.GetPixel(i, j);
-                    SpawnTerrain(thisPixel, x, z);
+                    SpawnBlock(thisPixel, x, z);
                     z--;
                     #region debugCode
                     /*
@@ -116,7 +134,7 @@ public class TerrainChunk : MonoBehaviour {
         _isRendered = true;
     }
 	
-    private void SpawnTerrain(Color pixel, float x, float z)
+    private void SpawnBlock(Color pixel, float x, float z)
     {
         var hexString = ColorUtility.ToHtmlStringRGBA(pixel);
 
@@ -304,4 +322,5 @@ public class TerrainChunk : MonoBehaviour {
             terrainComp._hasTree = hasTree;
         }
     }
+
 }
