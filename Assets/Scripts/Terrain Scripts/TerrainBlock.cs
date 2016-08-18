@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
-
+[ExecuteInEditMode]
 public class TerrainBlock : MonoBehaviour {
     public bool _hasTree;
 
@@ -13,6 +13,7 @@ public class TerrainBlock : MonoBehaviour {
             var treePos = transform.position;
             treePos.y++;
             var newTree = (GameObject)Instantiate(_defaultTree, treePos, Quaternion.identity);
+            newTree.transform.parent = transform;
         }
     }
 }
