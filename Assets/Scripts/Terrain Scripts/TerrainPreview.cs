@@ -14,14 +14,15 @@ public class TerrainPreview : MonoBehaviour {
     private TerrainMaster _myMaster;
     private TerrainChunk _myTerrain;
     private MeshRenderer _myRenderer;
-    public Texture2D _myTexture;
+    public Material _myMaterial;
 
     public TerrainType _currentTerrain;
-    private TerrainType _terrainCheck;
+    public TerrainType _terrainCheck; 
 
-    public Texture2D[] _grassLandLayouts;
-    public Texture2D[] _forestLayouts;
-    public Texture2D[] _riverLayouts;
+    public Material[] _grassLandLayouts;
+    public Material[] _forestLayouts;
+    public Material[] _riverLayouts;
+    private int _terrainIndex = 0;
     public bool _randomizeLayout;
     public bool _nextLayout;
     public bool _lastLayout;
@@ -36,31 +37,118 @@ public class TerrainPreview : MonoBehaviour {
         _myMaster = transform.parent.GetComponentInParent<TerrainMaster>();
         _myTerrain = GetComponentInParent<TerrainChunk>();
         _myRenderer = GetComponent<MeshRenderer>();
+        SwapMaterial(_myMaterial);
     }
 
     void Update () {
-        RenderPreview();
+        EditorControls();
+    }
 
-        if(_terrainCheck != _currentTerrain)
+    private void EditorControls()
+    {
+        if (_terrainCheck != _currentTerrain)
         {
-            SwapTerrain();
+            ChangeLayout(GetRandomLayout(GetTerrainLayouts()));
+            _terrainCheck = _currentTerrain;
+        }
+
+        if (_randomizeLayout)
+        {
+            ChangeLayout(GetRandomLayout(GetTerrainLayouts()));
+            _randomizeLayout = false;
+        }
+
+        if (_nextLayout)
+        {
+            ChangeLayout(GetNextLayout(GetTerrainLayouts()));
+            _nextLayout = false;
+        }
+
+        if (_lastLayout)
+        {
+            ChangeLayout(GetLastLayout(GetTerrainLayouts()));
+            _lastLayout = false;
         }
     }
 
-    private void SwapTerrain()
+    private void ChangeLayout(Material newLayout)
     {
+
+        _myMaterial = newLayout;
+        SwapMaterial(_myMaterial);
+        _myTerrain._layoutTexture = (Texture2D)newLayout.mainTexture;
+    }
+
+    private Material[] GetTerrainLayouts()
+    {
+
+        if(_currentTerrain == TerrainType._grassLandLayouts)
+        {
+            return _grassLandLayouts;
+        }
+        else if (_currentTerrain == TerrainType._forestLayouts)
+        {
+            return _forestLayouts;
+        }
+        else if (_currentTerrain == TerrainType._riverLayouts)
+        {
+            return _riverLayouts;
+        }
+
+        return _grassLandLayouts; //defualt
+
+        
+    }
+
+    private Material GetRandomLayout(Material[] thisLayoutGroup)
+    {
+        int randomIndex = (int)Random.Range(0f, thisLayoutGroup.Length);
+        _terrainIndex = randomIndex;
+        return thisLayoutGroup[randomIndex];
 
     }
 
-    private void RenderPreview()
+    private Material GetNextLayout(Material[] thisLayoutGroup)
     {
-        if (_myMaster._editingLevel)
+        var newIndex = _terrainIndex + 1;
+
+        if (newIndex > thisLayoutGroup.Length)
         {
-            _myTexture = _myTerrain._layoutTexture;
-            if (_myTexture != _myRenderer.material.mainTexture)
-            {
-                _myRenderer.material.mainTexture = _myTexture;
-            }
+            newIndex = 0;
+        }
+        else if (newIndex < 0)
+        {
+            newIndex = thisLayoutGroup.Length;
+        }
+
+        _terrainIndex = newIndex;
+        return thisLayoutGroup[newIndex];
+
+    }
+
+    private Material GetLastLayout(Material[] thisLayoutGroup)
+    {
+        var newIndex = _terrainIndex - 1;
+
+        if (newIndex > thisLayoutGroup.Length)
+        {
+            newIndex = 0;
+        } else if (newIndex < 0)
+        {
+            newIndex = thisLayoutGroup.Length;
+        }
+
+        _terrainIndex = newIndex;
+        return thisLayoutGroup[newIndex];
+
+    }
+
+
+    private void SwapMaterial(Material thisMaterial)
+    {
+        if (thisMaterial != _myRenderer.sharedMaterial)
+        {
+            _myRenderer.sharedMaterial = thisMaterial; 
         }
     }
 

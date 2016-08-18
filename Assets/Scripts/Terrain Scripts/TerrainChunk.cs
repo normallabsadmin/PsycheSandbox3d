@@ -6,7 +6,7 @@ using System.Collections;
 public class TerrainChunk : MonoBehaviour {
 
     public bool _runRender;
-    private bool _isRendered;
+    public bool _isRendered;
 
     public Texture2D _layoutTexture;
     private Texture2D _lastlayoutTexture;
@@ -28,24 +28,37 @@ public class TerrainChunk : MonoBehaviour {
 
     void Update()
     {
+        RenderLogic();
+    }
+
+    public void ChangeLayout(Texture2D newLayout)
+    {
+        _layoutTexture = newLayout;
+    }
+
+    void RenderLogic()
+    {
         if (_runRender && !_isRendered)
         {
             RenderTerrain();
+            _isRendered = true;
         }
         else if (!_runRender)
         {
             DeleteChunk();
+            _isRendered = false;
         }
 
-        if(_lastlayoutTexture != _layoutTexture)
+        if ((_lastlayoutTexture != _layoutTexture) && (_runRender))
         {
             DeleteChunk();
             RenderTerrain();
+            _isRendered = true;
         }
 
         _lastlayoutTexture = _layoutTexture;
-
     }
+
     /* Heavy Lifting Scripts
     void OnBecameVisible()
     {
@@ -69,7 +82,7 @@ public class TerrainChunk : MonoBehaviour {
             DestroyImmediate(transform.GetChild(1).gameObject);
         }
 
-        /*
+        /* in game code
         foreach(Transform child in transform)
         {
             if (child.GetComponent<TerrainBlock>())
@@ -78,7 +91,7 @@ public class TerrainChunk : MonoBehaviour {
             }
         }
         */
-        _isRendered = false;
+        
     }
 
     private void RenderTerrain()
@@ -103,7 +116,7 @@ public class TerrainChunk : MonoBehaviour {
                 x--;
             }
         }
-        _isRendered = true;
+        
     }
 	
     private void SpawnBlock(Color pixel, float x, float z)

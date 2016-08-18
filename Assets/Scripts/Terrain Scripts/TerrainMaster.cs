@@ -4,14 +4,22 @@ using System.Collections;
 [ExecuteInEditMode]
 public class TerrainMaster : MonoBehaviour
 {
+    [Tooltip("Both keys must be checked to regenerate landscape.")]
+    public bool _editKey1;
+    [Tooltip("Turn your key sir.")]
+    public bool _editKey2;
 
     public bool _editingLevel;
-    public bool _previewLevel = false;
+    public bool _generateLevel = false;
 
     public GameObject _terrainChunk;
-    [Range(1f, 100f)]
+    [Range(1f, 20f)]
     public int _mapSize = 1;
     private int _lastMapSize;
+    
+    private bool MasterKey() {
+        return _editKey1 && _editKey2;
+    }
 
     private void Start()
     {
@@ -20,8 +28,10 @@ public class TerrainMaster : MonoBehaviour
 
     private void Update()
     {
-        PreviewLevel();
-        RegenerateLevel();
+        if (MasterKey()) { 
+            GenerateLevel();
+            RegenerateLevel();
+        }
 
     }
 
@@ -34,9 +44,9 @@ public class TerrainMaster : MonoBehaviour
         _lastMapSize = _mapSize;
     }
 
-    private void PreviewLevel()
+    private void GenerateLevel()
     {
-        if (_previewLevel == true)
+        if (_generateLevel == true)
         {
             foreach (Transform child in transform)
             {
@@ -46,7 +56,7 @@ public class TerrainMaster : MonoBehaviour
                 }
             }
         }
-        else if (_previewLevel == false)
+        else if (_generateLevel == false)
         {
             foreach (Transform child in transform)
             {
