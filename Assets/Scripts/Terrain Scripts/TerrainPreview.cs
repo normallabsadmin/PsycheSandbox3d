@@ -14,9 +14,10 @@ public class TerrainPreview : MonoBehaviour {
     private TerrainMaster _myMaster;
     private TerrainChunk _myTerrain;
     private MeshRenderer _myRenderer;
-    private Texture2D _myTexture;
+    public Texture2D _myTexture;
 
     public TerrainType _currentTerrain;
+    private TerrainType _terrainCheck;
 
     public Texture2D[] _grassLandLayouts;
     public Texture2D[] _forestLayouts;
@@ -38,11 +39,27 @@ public class TerrainPreview : MonoBehaviour {
     }
 
     void Update () {
-        if (_myMaster._editingLevel) { 
+        RenderPreview();
+
+        if(_terrainCheck != _currentTerrain)
+        {
+            SwapTerrain();
+        }
+    }
+
+    private void SwapTerrain()
+    {
+
+    }
+
+    private void RenderPreview()
+    {
+        if (_myMaster._editingLevel)
+        {
             _myTexture = _myTerrain._layoutTexture;
-            if(_myTexture != _myRenderer.material.mainTexture)
+            if (_myTexture != _myRenderer.material.mainTexture)
             {
-                 _myRenderer.material.mainTexture = _myTexture;
+                _myRenderer.material.mainTexture = _myTexture;
             }
         }
     }
