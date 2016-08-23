@@ -16,8 +16,9 @@ public class TerrainPreview : MonoBehaviour {
     private MeshRenderer _myRenderer;
     public Material _myMaterial;
 
+    [SerializeField]
     public TerrainType _currentTerrain;
-    public TerrainType _terrainCheck; 
+    private TerrainType _terrainCheck; 
 
     public Material[] _grassLandLayouts;
     public Material[] _forestLayouts;
@@ -29,6 +30,7 @@ public class TerrainPreview : MonoBehaviour {
 
 
     void Start () {
+        UnityEditor.EditorUtility.SetDirty(this);
         Setup();       
 	}
 

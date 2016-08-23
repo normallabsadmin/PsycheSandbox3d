@@ -51,7 +51,7 @@ public class MovementHaver : MonoBehaviour {
             else
             {
                 _position = _transform.position;
-                //Debug.Log("Block in the way");
+                Debug.Log("Block in the way");
             }
 
         }

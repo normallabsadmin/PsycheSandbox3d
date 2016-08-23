@@ -21,9 +21,9 @@ public class TerrainMaster : MonoBehaviour
         return _editKey1 && _editKey2;
     }
 
-    private void Start()
+    void Start()
     {
-        
+        UnityEditor.EditorUtility.SetDirty(this);
     }
 
     private void Update()

@@ -8,6 +8,7 @@ public class TerrainChunk : MonoBehaviour {
     public bool _runRender;
     public bool _isRendered;
 
+    [SerializeField]
     public Texture2D _layoutTexture;
     private Texture2D _lastlayoutTexture;
     private float _elevationBump = 0;
@@ -19,16 +20,15 @@ public class TerrainChunk : MonoBehaviour {
     public GameObject _sandBlock;
     public GameObject _stoneBlock;
 
-    // Use this for initialization
-    void Start () {
-
-        _elevationBump = transform.position.y;
-
+    void Start()
+    {
+        UnityEditor.EditorUtility.SetDirty(this);
     }
 
     void Update()
     {
         RenderLogic();
+        _elevationBump = transform.position.y;
     }
 
     public void ChangeLayout(Texture2D newLayout)
